@@ -1,4 +1,4 @@
-package com.caffmaniac.whosthat.ui.theme
+package com.caffmaniac.whosthat.composeui.theme
 
 import androidx.compose.ui.graphics.Color
 
