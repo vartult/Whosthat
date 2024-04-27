@@ -6,9 +6,6 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class UserEntity(
-    @PrimaryKey(autoGenerate = true) val uid: Int = 1,
-    @ColumnInfo(name = "phoneNumber") val phoneNumber: String?,
-    @ColumnInfo(name = "countryCode") val countryCode: String?,
+    @PrimaryKey @ColumnInfo(name = "phoneNumber") val phoneNumber: String,
     @ColumnInfo(name = "aliasName") val aliasName: String?,
-    @ColumnInfo(name = "url") val intentUrl: String?
 )

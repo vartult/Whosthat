@@ -8,4 +8,6 @@ sealed interface WhosthatScreenEvent {
     ) : WhosthatScreenEvent
 
     data class OnItemClicked(val intentUrl: String) : WhosthatScreenEvent
+    data class OnSwipeToTriggerWhatsapp(val phoneNumber: String) : WhosthatScreenEvent
+    data class OnSwipeToCopyNumber(val phoneNumber: String) : WhosthatScreenEvent
 }

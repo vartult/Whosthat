@@ -1,10 +1,9 @@
 package com.caffmaniac.whosthat.app.ui.phonenumber
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,7 +13,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -36,7 +34,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.caffmaniac.whosthat.R
 import com.caffmaniac.whosthat.app.domain.WhosthatScreenEvent
-import com.caffmaniac.whosthat.app.domain.WhosthatScreenState
+import com.caffmaniac.whosthat.app.domain.model.WhosthatScreenState
 
 @Composable
 fun SendMessage(
@@ -68,6 +66,7 @@ fun SendMessage(
     ) {
         Column(
             modifier = Modifier
+                .background(color = MaterialTheme.colorScheme.primaryContainer)
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(16.dp),
@@ -83,7 +82,7 @@ fun SendMessage(
             TextInputField(
                 modifier = Modifier,
                 label = "Alias",
-                painter = painterResource(id = R.drawable.ic_settings),
+                painter = painterResource(id = R.drawable.ic_contact),
                 imgDesc = "Alias",
                 imeAction = ImeAction.Next,
                 text = alias,
@@ -98,7 +97,7 @@ fun SendMessage(
             TextInputField(
                 modifier = Modifier,
                 label = "Message",
-                painter = painterResource(id = R.drawable.ic_settings),
+                painter = painterResource(id = R.drawable.ic_chat_bubble),
                 imgDesc = "Message",
                 imeAction = ImeAction.Done,
                 text = message,
@@ -123,7 +122,7 @@ fun PhoneButton(
     message: String,
     isProcessingMsgRequest: Boolean
 ) {
-    Button(modifier = Modifier, shape = ButtonDefaults.elevatedShape, onClick = {
+    Button(modifier = Modifier.fillMaxWidth(), shape = ButtonDefaults.elevatedShape, onClick = {
         onEventHandler.invoke(
             WhosthatScreenEvent.OnSendMessage(
                 phoneNumber = phoneNumber,
@@ -132,14 +131,14 @@ fun PhoneButton(
             )
         )
     }) {
-        if (isProcessingMsgRequest) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .aspectRatio(1f)
-            )
-        } else
-            Text(text = "Send Message")
+//        if (isProcessingMsgRequest) {
+//            CircularProgressIndicator(
+//                modifier = Modifier
+//                    .wrapContentHeight()
+//            )
+//        } else
+//            Text(text = "Send Message")
+        Text(text = "Send Message")
     }
 }
 
@@ -157,7 +156,7 @@ fun PhoneNumberInputField(
             .fillMaxWidth(),
         value = phoneNumber,
         onValueChange = { newText ->
-            if (maxCharLimit > newText.length)
+            if (maxCharLimit >= newText.length)
                 liveText.invoke(newText)
             if (isError) {
                 errorStateCallback.invoke(false)
@@ -166,7 +165,7 @@ fun PhoneNumberInputField(
         label = { Text(text = "Phone Number") },
         leadingIcon = {
             Icon(
-                painter = painterResource(id = R.drawable.ic_settings),
+                painter = painterResource(id = R.drawable.ic_call),
                 contentDescription = "Phone"
             )
         },
@@ -237,6 +236,6 @@ fun TextInputField(
             onNext = {
                 focusManager.moveFocus(FocusDirection.Down)
             }
-        )
+        ),
     )
 }

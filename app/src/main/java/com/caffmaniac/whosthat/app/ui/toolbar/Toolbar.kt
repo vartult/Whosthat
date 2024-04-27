@@ -21,7 +21,7 @@ import com.caffmaniac.whosthat.composeui.theme.WhosthatDynamicTheme
 @Composable
 fun Toolbar(modifier: Modifier) {
     Box(
-        modifier = modifier.background(color = MaterialTheme.colorScheme.background).padding(horizontal = 16.dp)
+        modifier = modifier.padding(horizontal = 16.dp)
     ) {
         Text(
             modifier = modifier
@@ -30,17 +30,17 @@ fun Toolbar(modifier: Modifier) {
             textAlign = TextAlign.Start,
             text = "Whosthat",
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.secondary
+            color = MaterialTheme.colorScheme.onSurface
         )
-        Icon(
-            painter = painterResource(id = R.drawable.ic_settings),
-            contentDescription = "Settings",
-            modifier = modifier
-                .padding(top = 8.dp, start = 8.dp, bottom = 8.dp)
-                .size(28.dp)
-                .align(Alignment.CenterEnd),
-            tint = MaterialTheme.colorScheme.secondary
-        )
+//        Icon(
+//            painter = painterResource(id = R.drawable.ic_settings),
+//            contentDescription = "Settings",
+//            modifier = modifier
+//                .padding(top = 8.dp, start = 8.dp, bottom = 8.dp)
+//                .size(28.dp)
+//                .align(Alignment.CenterEnd),
+//            tint = MaterialTheme.colorScheme.secondary
+//        )
     }
 }
 

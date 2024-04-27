@@ -11,13 +11,11 @@ class DatabaseUsecase @Inject constructor(
         return repository.getAllUserList()
     }
 
-    suspend fun saveUserData(phoneNumber: String, alias: String, url: String, countryCode: String) {
+    suspend fun saveUserData(phoneNumber: String, alias: String) {
         repository.saveUserData(
             UserEntity(
                 phoneNumber = phoneNumber,
                 aliasName = alias,
-                intentUrl = url,
-                countryCode = countryCode
             )
         )
     }
