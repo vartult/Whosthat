@@ -1,7 +1,7 @@
 package com.caffmaniac.whosthat.app.ui.search
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,8 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.caffmaniac.whosthat.R
@@ -83,30 +81,35 @@ fun PreviousContactItem(userHistoryDataItem: UserHistoryDataItem) {
             .wrapContentHeight(),
         shape = getItemShape(userHistoryDataItem.isFirstItem, userHistoryDataItem.isLastItem)
     ) {
-        Row(
-            modifier = Modifier
-                .background(color = MaterialTheme.colorScheme.primaryContainer)
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_avatar),
-                contentDescription = "Avatar",
+        Column {
+            Row(
                 modifier = Modifier
-                    .size(24.dp)
-                    .clip(CircleShape),
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    .background(color = MaterialTheme.colorScheme.primaryContainer)
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_avatar),
+                    contentDescription = "Avatar",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clip(CircleShape),
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
 
-            )
-            Text(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .weight(1f),
-                text = userHistoryDataItem.name ?: userHistoryDataItem.phoneNumber,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-                color = Color.Unspecified
-            )
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .weight(1f),
+                    text = if (userHistoryDataItem.name.isNullOrEmpty()) userHistoryDataItem.phoneNumber
+                    else userHistoryDataItem.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Unspecified
+                )
+            }
+            if (!userHistoryDataItem.isLastItem)
+                Divider(color = MaterialTheme.colorScheme.onSecondaryContainer, thickness = 1.dp)
         }
     }
 }

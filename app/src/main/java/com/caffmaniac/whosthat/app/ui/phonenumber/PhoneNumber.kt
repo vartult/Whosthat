@@ -236,6 +236,6 @@ fun TextInputField(
             onNext = {
                 focusManager.moveFocus(FocusDirection.Down)
             }
-        ),
+        )
     )
 }
