@@ -7,7 +7,7 @@ data class WhosthatScreenState(
     val phoneNumber: MutableState<String>,
     val alias: MutableState<String>,
     val message: MutableState<String>,
-    val isError: MutableState<Boolean>,
+    val isError: MutableState<String?>,
     val isProcessingMsgRequest: MutableState<Boolean>,
     val whatsappData: MutableState<WhatsappData?>
 )

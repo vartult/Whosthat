@@ -1,10 +1,7 @@
 package com.caffmaniac.whosthat.app.ui
 
 import android.content.ActivityNotFoundException
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -14,15 +11,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Snackbar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.caffmaniac.whosthat.app.domain.WhosthatScreenEvent
 import com.caffmaniac.whosthat.app.domain.model.WhosthatScreenState
 import com.caffmaniac.whosthat.app.domain.WhosthatViewModel
-import com.caffmaniac.whosthat.app.ui.phonenumber.SendMessage
-import com.caffmaniac.whosthat.app.ui.search.Search
+import com.caffmaniac.whosthat.app.ui.phonenumber.SendMessageFormUI
+import com.caffmaniac.whosthat.app.ui.search.SearchHistory
 import com.caffmaniac.whosthat.app.ui.toolbar.Toolbar
 import com.caffmaniac.whosthat.composeui.theme.WhosthatDynamicTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,29 +47,20 @@ class WhosthatActivity : ComponentActivity() {
         state: WhosthatScreenState,
         onEventHandler: (WhosthatScreenEvent) -> Unit = {}
     ) {
+        LaunchedEffect(key1 = state.whatsappData.value) {
+            state.whatsappData.value?.let { safeWhatsappData ->
+                openInWhatsapp(safeWhatsappData.phoneNo, safeWhatsappData.message)
+            }
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = MaterialTheme.colorScheme.surface)
         ) {
             Toolbar(Modifier)
-            SendMessage(Modifier, state, onEventHandler)
-            Search(state, onEventHandler){phoneNumber->
-                handleCopyText(phoneNumber)
-            }
-            checkIfRedirectToWhatsapp(state)
-        }
-    }
-
-    private fun handleCopyText(phoneNumber: String) {
-        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip: ClipData = ClipData.newPlainText("Whosthat phone no", phoneNumber)
-        clipboard.setPrimaryClip(clip)
-    }
-
-    private fun checkIfRedirectToWhatsapp(state: WhosthatScreenState) {
-        state.whatsappData.value?.let { safeWhatsappData ->
-            openInWhatsapp(safeWhatsappData.phoneNo, safeWhatsappData.message)
+            SendMessageFormUI(Modifier, state, onEventHandler)
+            SearchHistory(state, onEventHandler)
         }
     }
 
@@ -93,6 +81,5 @@ class WhosthatActivity : ComponentActivity() {
         } catch (e: ActivityNotFoundException) {
             Toast.makeText(applicationContext, "Whatsapp not installed", Toast.LENGTH_LONG).show()
         }
-
     }
 }

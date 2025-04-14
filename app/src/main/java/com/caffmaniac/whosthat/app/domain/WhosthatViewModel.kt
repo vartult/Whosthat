@@ -38,7 +38,7 @@ class WhosthatViewModel @Inject constructor(
     private val phoneNumber = mutableStateOf("")
     private val alias = mutableStateOf("")
     private val message = mutableStateOf("")
-    private val phoneNumberError = mutableStateOf(false)
+    private val phoneNumberError = mutableStateOf<String?>(null)
     private val isProcessingMsgRequest = mutableStateOf(false)
     private val whatsappData = mutableStateOf<WhatsappData?>(null)
 
@@ -153,7 +153,7 @@ class WhosthatViewModel @Inject constructor(
 
             is WhosthatScreenEvent.OnSendMessage -> {
                 // Validate Phone Number
-                if (PhoneNumberUtils.isGlobalPhoneNumber(event.phoneNumber)) {
+                if (isValidPhoneNumber(event.phoneNumber)) {
                     //Trigger whatsapp
                     whatsappData.value = WhatsappData(event.phoneNumber, event.message)
                     isProcessingMsgRequest.value = true
@@ -163,25 +163,65 @@ class WhosthatViewModel @Inject constructor(
                         val userEntityList = databaseUsecase.getAllUserList()
                         userDataList.value = mapToUserHistoryItemDataList(userEntityList)
                     }
-                    Log.d("ViewModel", event.message)
                     // Clear Data
-                    phoneNumber.value = ""
-                    alias.value = ""
-                    message.value = ""
-                } else {
-                    whatsappData.value = null
-                    phoneNumberError.value = true
+                    clearFields()
                 }
             }
 
             is WhosthatScreenEvent.OnSwipeToCopyNumber -> {
-
+                event.context.handleCopyText(event.phoneNumber)
             }
 
             is WhosthatScreenEvent.OnSwipeToTriggerWhatsapp -> {
                 whatsappData.value = WhatsappData(event.phoneNumber, "")
             }
         }
+    }
+
+    private fun Context.handleCopyText(phoneNumber: String) {
+        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip: ClipData = ClipData.newPlainText("Whosthat phone no", phoneNumber)
+        clipboard.setPrimaryClip(clip)
+    }
+
+    private fun clearFields() {
+        phoneNumber.value = ""
+        alias.value = ""
+        message.value = ""
+    }
+
+    private fun isValidPhoneNumber(phoneNumber: String): Boolean {
+        // Reset error text
+        phoneNumberError.value = ""
+
+        // Remove any whitespace, dashes, or parentheses
+        val cleanedNumber = phoneNumber.replace(Regex("[\\s\\-()]"), "")
+
+        // Check if the number is empty
+        if (cleanedNumber.isEmpty()) {
+            phoneNumberError.value = "Phone number cannot be empty"
+            return false
+        }
+
+        // Check if the number contains only digits
+        if (!cleanedNumber.matches(Regex("^\\d+$"))) {
+            phoneNumberError.value = "Phone number can only contain digits, spaces, dashes, and parentheses"
+            return false
+        }
+
+        // Check for minimum and maximum length
+        if (cleanedNumber.length < 10 || cleanedNumber.length > 15) {
+            phoneNumberError.value = "Phone number must be between 10-15 digits"
+            return false
+        }
+
+        // Check if it starts with a plus sign (optional)
+        if (phoneNumber.startsWith("+") && !phoneNumber.matches(Regex("^\\+[0-9]+$"))) {
+            phoneNumberError.value = "Invalid format for international phone number"
+            return false
+        }
+
+        return true
     }
 
 }

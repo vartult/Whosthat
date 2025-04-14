@@ -1,5 +1,8 @@
 package com.caffmaniac.whosthat.app.ui.phonenumber
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,7 +40,7 @@ import com.caffmaniac.whosthat.app.domain.WhosthatScreenEvent
 import com.caffmaniac.whosthat.app.domain.model.WhosthatScreenState
 
 @Composable
-fun SendMessage(
+fun SendMessageFormUI(
     modifier: Modifier,
     state: WhosthatScreenState,
     onEventHandler: (WhosthatScreenEvent) -> Unit
@@ -51,7 +54,7 @@ fun SendMessage(
     var message: String by rememberSaveable {
         state.message
     }
-    var isError: Boolean by rememberSaveable {
+    var errorText: String? by rememberSaveable {
         state.isError
     }
 
@@ -73,10 +76,9 @@ fun SendMessage(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly,
         ) {
-            PhoneNumberInputField(modifier = Modifier, phoneNumber, isError, {
-                isError = false
-            }) {
+            PhoneNumberInputField(modifier = Modifier, phoneNumber, errorText) {
                 phoneNumber = it
+                errorText = ""
             }
             Spacer(modifier = Modifier.height(4.dp))
             TextInputField(
@@ -131,13 +133,6 @@ fun PhoneButton(
             )
         )
     }) {
-//        if (isProcessingMsgRequest) {
-//            CircularProgressIndicator(
-//                modifier = Modifier
-//                    .wrapContentHeight()
-//            )
-//        } else
-//            Text(text = "Send Message")
         Text(text = "Send Message")
     }
 }
@@ -146,8 +141,7 @@ fun PhoneButton(
 fun PhoneNumberInputField(
     modifier: Modifier,
     phoneNumber: String,
-    isError: Boolean,
-    errorStateCallback: (Boolean) -> Unit,
+    isError: String?,
     liveText: (String) -> Unit
 ) {
     val maxCharLimit = 10
@@ -158,9 +152,6 @@ fun PhoneNumberInputField(
         onValueChange = { newText ->
             if (maxCharLimit >= newText.length)
                 liveText.invoke(newText)
-            if (isError) {
-                errorStateCallback.invoke(false)
-            }
         },
         label = { Text(text = "Phone Number") },
         leadingIcon = {
@@ -177,12 +168,16 @@ fun PhoneNumberInputField(
             imeAction = ImeAction.Next,
             keyboardType = KeyboardType.Phone
         ),
-        isError = isError,
+        isError = !isError.isNullOrEmpty(),
         supportingText = {
-            if (isError) {
+            AnimatedVisibility(
+                !isError.isNullOrEmpty(),
+                enter = slideInVertically(),
+                exit = slideOutVertically()
+            ) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Invalid Phone Number",
+                    text = isError ?: "",
                     color = MaterialTheme.colorScheme.error
                 )
             }
