@@ -22,6 +22,7 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -34,7 +35,8 @@ val stroke = Stroke(
 )
 
 @Composable
-fun Search(state: WhosthatScreenState, onEventHandler: (WhosthatScreenEvent) -> Unit, onSwipeTriggerCopy: (String) -> Unit) {
+fun Search(state: WhosthatScreenState, onEventHandler: (WhosthatScreenEvent) -> Unit) {
+    val context = LocalContext.current
     val userList by rememberSaveable {
         state.userList
     }
@@ -42,15 +44,10 @@ fun Search(state: WhosthatScreenState, onEventHandler: (WhosthatScreenEvent) -> 
         ItemListEmptyView()
     else {
         Column(
-            modifier = Modifier.padding(
-                top = 16.dp,
-                start = 16.dp,
-                end = 16.dp,
-                bottom = 16.dp
-            )
+            modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
         ) {
             Text(
-                text = "Recents",
+                text = "Contact History",
                 textAlign = TextAlign.Start,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface
@@ -64,14 +61,14 @@ fun Search(state: WhosthatScreenState, onEventHandler: (WhosthatScreenEvent) -> 
                         userList.forEach { userHistoryDataItem ->
                             PreviousContactSection(
                                 userHistoryDataItem = userHistoryDataItem,
-                                onSwipeTriggerCopy = {
-                                    onSwipeTriggerCopy.invoke(it)
-                                },
-                                onSwipeTriggerWhatsApp = {
+                                onSwipeTriggerCopy = { text ->
                                     onEventHandler.invoke(
-                                        WhosthatScreenEvent.OnSwipeToTriggerWhatsapp(
-                                            it
-                                        )
+                                        WhosthatScreenEvent.OnSwipeToCopyNumber(context, text)
+                                    )
+                                },
+                                onSwipeTriggerWhatsApp = { text ->
+                                    onEventHandler.invoke(
+                                        WhosthatScreenEvent.OnSwipeToTriggerWhatsapp(text)
                                     )
                                 })
                         }
