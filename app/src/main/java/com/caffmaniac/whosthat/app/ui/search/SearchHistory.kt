@@ -1,5 +1,6 @@
 package com.caffmaniac.whosthat.app.ui.search
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,8 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,9 +25,9 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.caffmaniac.whosthat.R
 import com.caffmaniac.whosthat.app.domain.WhosthatScreenEvent
 import com.caffmaniac.whosthat.app.domain.model.WhosthatScreenState
+import com.caffmaniac.whosthat.app.domain.model.WhosthatUiState
 
 val stroke = Stroke(
     width = 2f,
@@ -37,11 +36,32 @@ val stroke = Stroke(
 
 @Composable
 fun SearchHistory(state: WhosthatScreenState, onEventHandler: (WhosthatScreenEvent) -> Unit) {
+    when (state.userSearchUiState.value) {
+        is WhosthatUiState.Error -> {
+            // Do Nothing
+        }
+
+        WhosthatUiState.Idle -> {
+            // Do Nothing
+        }
+
+        WhosthatUiState.Loading -> {
+            // Do Nothing
+        }
+
+        is WhosthatUiState.Success -> {
+            UserSearchHistory(state, onEventHandler)
+        }
+    }
+}
+
+@Composable
+fun UserSearchHistory(state: WhosthatScreenState, onEventHandler: (WhosthatScreenEvent) -> Unit) {
     val context = LocalContext.current
 
-    if (state.userList.isEmpty())
+    if (state.userList.isEmpty()) {
         ItemListEmptyView()
-    else {
+    } else {
         Column(
             modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
         ) {

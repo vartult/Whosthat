@@ -5,6 +5,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 
 data class WhosthatScreenState(
     val userList: SnapshotStateList<UserHistoryDataItem>,
+    val userSearchUiState: MutableState<WhosthatUiState<Unit>>,
     val phoneNumber: MutableState<String>,
     val alias: MutableState<String>,
     val message: MutableState<String>,

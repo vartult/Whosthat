@@ -14,6 +14,7 @@ import com.caffmaniac.whosthat.app.data.model.UserEntity
 import com.caffmaniac.whosthat.app.domain.model.UserHistoryDataItem
 import com.caffmaniac.whosthat.app.domain.model.WhatsappData
 import com.caffmaniac.whosthat.app.domain.model.WhosthatScreenState
+import com.caffmaniac.whosthat.app.domain.model.WhosthatUiState
 import com.caffmaniac.whosthat.app.domain.usecase.DatabaseUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -35,6 +36,7 @@ class WhosthatViewModel @Inject constructor(
     private val phoneNumberError = mutableStateOf<String?>(null)
     private val isProcessingMsgRequest = mutableStateOf(false)
     private val whatsappData = mutableStateOf<WhatsappData?>(null)
+    private val whosthatUiState = mutableStateOf<WhosthatUiState<Unit>>(WhosthatUiState.Idle)
 
     @Composable
     fun uiState(): WhosthatScreenState {
@@ -44,6 +46,7 @@ class WhosthatViewModel @Inject constructor(
 
         return WhosthatScreenState(
             userList = getUserHistoryList(),
+            userSearchUiState = getUiState(),
             phoneNumber = getPhoneNumber(),
             alias = getAlias(),
             message = getMessage(),
@@ -67,11 +70,14 @@ class WhosthatViewModel @Inject constructor(
 
     private fun getUserHistoryList() = userDataList
 
+    private fun getUiState() = whosthatUiState
+
     private fun start() {
         // Fetch all txn list
         viewModelScope.launch(Dispatchers.IO) {
             val userEntityList = databaseUsecase.getAllSearchHistory()
             userDataList.addAll(mapToUserHistoryItemDataList(userEntityList))
+            whosthatUiState.value = WhosthatUiState.Success(Unit)
         }
     }
 
