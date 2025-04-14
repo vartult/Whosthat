@@ -10,6 +10,10 @@ class WhosthatRepository @Inject constructor(private val userDao: UserDao) {
         return userDao.getAll()
     }
 
+    suspend fun getUserByNumber(phoneNo: String): List<UserEntity> {
+        return userDao.getUserByNumber(phoneNo)
+    }
+
     suspend fun saveUserData(userEntity: UserEntity) {
         return userDao.insertAll(userEntity)
     }

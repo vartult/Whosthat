@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,12 +23,15 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -144,14 +148,21 @@ fun PhoneNumberInputField(
     isError: String?,
     liveText: (String) -> Unit
 ) {
-    val maxCharLimit = 10
+    val maxCharLimit = 15
+    val focusRequester = remember { FocusRequester() }
     OutlinedTextField(
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .focusRequester(focusRequester),
         value = phoneNumber,
         onValueChange = { newText ->
-            if (maxCharLimit >= newText.length)
-                liveText.invoke(newText)
+            // Remove whitespace and enforce character limit
+            val sanitizedText = newText.replace("\\s".toRegex(), "")
+            if (sanitizedText.length <= maxCharLimit) {
+                liveText.invoke(sanitizedText)
+            } else {
+                liveText.invoke(sanitizedText.take(maxCharLimit))
+            }
         },
         label = { Text(text = "Phone Number") },
         leadingIcon = {

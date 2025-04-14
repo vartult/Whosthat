@@ -1,16 +1,11 @@
 package com.caffmaniac.whosthat.app.ui.search
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -75,52 +70,31 @@ fun PreviousContactSection(
 
 @Composable
 fun PreviousContactItem(userHistoryDataItem: UserHistoryDataItem) {
-    Card(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight(),
-        shape = getItemShape(userHistoryDataItem.isFirstItem, userHistoryDataItem.isLastItem)
+            .background(color = MaterialTheme.colorScheme.primaryContainer)
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Column {
-            Row(
-                modifier = Modifier
-                    .background(color = MaterialTheme.colorScheme.primaryContainer)
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_avatar),
-                    contentDescription = "Avatar",
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clip(CircleShape),
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+        Icon(
+            painter = painterResource(id = R.drawable.ic_avatar),
+            contentDescription = "Avatar",
+            modifier = Modifier
+                .size(24.dp)
+                .clip(CircleShape),
+            tint = MaterialTheme.colorScheme.onPrimaryContainer
 
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .weight(1f),
-                    text = if (userHistoryDataItem.name.isNullOrEmpty()) userHistoryDataItem.phoneNumber
-                    else userHistoryDataItem.name,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Unspecified
-                )
-            }
-            if (!userHistoryDataItem.isLastItem)
-                Divider(color = MaterialTheme.colorScheme.onSecondaryContainer, thickness = 1.dp)
-        }
-    }
-}
-
-@Composable
-private fun getItemShape(firstItem: Boolean, lastItem: Boolean): RoundedCornerShape {
-    return if (firstItem) {
-        RoundedCornerShape(8.dp, 8.dp, 0.dp, 0.dp)
-    } else if (lastItem) {
-        RoundedCornerShape(0.dp, 0.dp, 8.dp, 8.dp)
-    } else {
-        RoundedCornerShape(0.dp, 0.dp, 0.dp, 0.dp)
+        )
+        Text(
+            modifier = Modifier
+                .padding(8.dp)
+                .weight(1f),
+            text = if (userHistoryDataItem.name.isNullOrEmpty()) "+91 ${userHistoryDataItem.phoneNumber}"
+            else userHistoryDataItem.name,
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Bold,
+            color = Color.Unspecified
+        )
     }
 }

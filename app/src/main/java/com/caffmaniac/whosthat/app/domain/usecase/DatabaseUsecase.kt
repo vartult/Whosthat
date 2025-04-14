@@ -7,15 +7,20 @@ import javax.inject.Inject
 class DatabaseUsecase @Inject constructor(
     private val repository: WhosthatRepository
 ) {
-    suspend fun getAllUserList(): List<UserEntity> {
+    suspend fun getAllSearchHistory(): List<UserEntity> {
         return repository.getAllUserList()
     }
 
-    suspend fun saveUserData(phoneNumber: String, alias: String) {
+    suspend fun getHistoryByNumber(phoneNumber: String): List<UserEntity> {
+        return repository.getUserByNumber(phoneNumber)
+    }
+
+    suspend fun saveUserData(phoneNumber: String, alias: String, currentTimeStamp: Long) {
         repository.saveUserData(
             UserEntity(
                 phoneNumber = phoneNumber,
                 aliasName = alias,
+                timeStamp = currentTimeStamp
             )
         )
     }
